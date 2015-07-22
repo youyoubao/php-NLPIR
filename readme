@@ -1,0 +1,10 @@
+/usr/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config
+
+vim Makefile
+	CC = cc  
+		改为 CC = g++
+	CPPFLAGS = -DHAVE_CONFIG_H
+		改为 CPPFLAGS = -DHAVE_CONFIG_H -DOS_LINUX -lNLPIR
+make
+make install

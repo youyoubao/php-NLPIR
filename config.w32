@@ -1,0 +1,13 @@
+// $Id$
+// vim:ft=javascript
+
+// If your extension references something external, use ARG_WITH
+// ARG_WITH("nlpir", "for nlpir support", "no");
+
+// Otherwise, use ARG_ENABLE
+// ARG_ENABLE("nlpir", "enable nlpir support", "no");
+
+if (PHP_NLPIR != "no") {
+	EXTENSION("nlpir", "nlpir.c");
+}
+
