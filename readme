@@ -1,5 +1,5 @@
 安装步骤：
-1:	mv libNLPIR.so /usr/lib/
+1:	mv libNLPIR64.so /usr/lib/
 2:	phpize
 3:	./configure
 5:	make
