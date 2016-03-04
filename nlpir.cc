@@ -263,7 +263,7 @@ PHP_FUNCTION(ImportUserDict) {
         RETURN_NULL();
     }
 
-    RETURN_INT(NLPIR_ImportUserDict(sFilename, bOverwrite));
+    RETURN_LONG(NLPIR_ImportUserDict(sFilename, bOverwrite));
 }
 
 PHP_FUNCTION(FileProcess) {
@@ -276,7 +276,7 @@ PHP_FUNCTION(FileProcess) {
         RETURN_NULL();
     }
 
-    RETURN_DOUBLE(NLPIR_FileProcess(sSourceFilename, sResultFilename, bOverwrite));
+    RETURN_DOUBLE(NLPIR_FileProcess(sSourceFilename, sResultFilename, bPOStagged));
 }
 
 PHP_FUNCTION(AddUserWord) {
@@ -304,7 +304,7 @@ PHP_FUNCTION(DelUsrWord) {
         RETURN_NULL();
     }
 
-    RETURN_INT(NLPIR_DelUsrWord(sWord));
+    RETURN_LONG(NLPIR_DelUsrWord(sWord));
 }
 
 PHP_FUNCTION(GetKeyWords) {
@@ -344,7 +344,7 @@ PHP_FUNCTION(ImportKeyBlackList) {
         RETURN_NULL();
     }
 
-    RETURN_INT(NLPIR_ImportKeyBlackList(sFilename));
+    RETURN_LONG(NLPIR_ImportKeyBlackList(sFilename));
 }
 
 PHP_FUNCTION(GetNewWords) {
