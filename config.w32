@@ -2,9 +2,6 @@
 // vim:ft=javascript
 // config.w32 for extension nlpir
 
-// If your extension references something external, use ARG_WITH
-ARG_WITH("nlpir", "for nlpir support", "no");
-
 // Otherwise, use ARG_ENABLE
 ARG_ENABLE("nlpir", "enable nlpir support", "no");
 
