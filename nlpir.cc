@@ -44,24 +44,24 @@ const zend_function_entry nlpir_functions[] = {
     PHP_FE(NLPIR_Init,    NULL)
     PHP_FE(NLPIR_Exit,    NULL)
     PHP_FE(NLPIR_GetLastErrorMsg,    NULL)
-    PHP_FE(ParagraphProcess,    NULL)
-    PHP_FE(ParagraphProcessA,    NULL)
-    PHP_FE(ImportUserDict,    NULL)
-    PHP_FE(FileProcess,    NULL) 
-    PHP_FE(AddUserWord,    NULL) 
-    PHP_FE(SaveTheUsrDic,    NULL) 
-    PHP_FE(DelUsrWord,    NULL)
-    PHP_FE(GetKeyWords,    NULL) 
-    PHP_FE(GetFileKeyWords,    NULL) 
-    PHP_FE(ImportKeyBlackList,    NULL)
-    PHP_FE(GetNewWords,    NULL) 
-    PHP_FE(GetFileNewWords,    NULL) 
-    PHP_FE(FingerPrint,    NULL) 
-    PHP_FE(SetPOSmap,    NULL) 
-    PHP_FE(FinerSegment,    NULL) 
-    PHP_FE(GetEngWordOrign,    NULL)
-    PHP_FE(WordFreqStat,    NULL) 
-    PHP_FE(FileWordFreqStat,    NULL)
+    PHP_FE(NLPIR_ParagraphProcess,    NULL)
+    PHP_FE(NLPIR_ParagraphProcessA,    NULL)
+    PHP_FE(NLPIR_ImportUserDict,    NULL)
+    PHP_FE(NLPIR_FileProcess,    NULL)
+    PHP_FE(NLPIR_AddUserWord,    NULL)
+    PHP_FE(NLPIR_SaveTheUsrDic,    NULL)
+    PHP_FE(NLPIR_DelUsrWord,    NULL)
+    PHP_FE(NLPIR_GetKeyWords,    NULL)
+    PHP_FE(NLPIR_GetFileKeyWords,    NULL)
+    PHP_FE(NLPIR_ImportKeyBlackList,    NULL)
+    PHP_FE(NLPIR_GetNewWords,    NULL)
+    PHP_FE(NLPIR_GetFileNewWords,    NULL)
+    PHP_FE(NLPIR_FingerPrint,    NULL)
+    PHP_FE(NLPIR_SetPOSmap,    NULL)
+    PHP_FE(NLPIR_FinerSegment,    NULL)
+    PHP_FE(NLPIR_GetEngWordOrign,    NULL)
+    PHP_FE(NLPIR_WordFreqStat,    NULL)
+    PHP_FE(NLPIR_FileWordFreqStat,    NULL)
     PHP_FE_END    /* Must be the last line in nlpir_functions[] */
 };
 /* }}} */
@@ -115,9 +115,24 @@ static void php_nlpir_init_globals(zend_nlpir_globals *nlpir_globals)
  */
 PHP_MINIT_FUNCTION(nlpir)
 {
-    /* If you have INI entries, uncomment these lines 
+    /* If you have INI entries, uncomment these lines
     REGISTER_INI_ENTRIES();
     */
+
+    // 标注集
+    REGISTER_LONG_CONSTANT("NLPIR_POS_MAP_NUMBER", POS_MAP_NUMBER, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("NLPIR_ICT_POS_MAP_FIRST", ICT_POS_MAP_FIRST, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("NLPIR_ICT_POS_MAP_SECOND", ICT_POS_MAP_SECOND, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("NLPIR_PKU_POS_MAP_SECOND", PKU_POS_MAP_SECOND, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("NLPIR_PKU_POS_MAP_FIRST", PKU_POS_MAP_FIRST, CONST_CS | CONST_PERSISTENT);
+
+    // 字符集
+    REGISTER_LONG_CONSTANT("NLPIR_GBK_CODE", GBK_CODE, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("NLPIR_UTF8_CODE", UTF8_CODE, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("NLPIR_BIG5_CODE", BIG5_CODE, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("NLPIR_GBK_FANTI_CODE", GBK_FANTI_CODE, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("NLPIR_UTF8_FANTI_CODE", UTF8_FANTI_CODE, CONST_CS | CONST_PERSISTENT);
+
     return SUCCESS;
 }
 /* }}} */
@@ -205,7 +220,7 @@ PHP_FUNCTION(NLPIR_Init)
     }
 }
 
-PHP_FUNCTION(ParagraphProcess)
+PHP_FUNCTION(NLPIR_ParagraphProcess)
 {
     const char *inputChar;
     int slen, flag;
@@ -253,7 +268,7 @@ PHP_FUNCTION(NLPIR_GetLastErrorMsg) {
     RETURN_STRING(NLPIR_GetLastErrorMsg(), 1);
 }
 
-PHP_FUNCTION(ImportUserDict) {
+PHP_FUNCTION(NLPIR_ImportUserDict) {
     const char *sFilename;
     int slen;
     zend_bool bOverwrite = 1;
@@ -266,7 +281,7 @@ PHP_FUNCTION(ImportUserDict) {
     RETURN_LONG(NLPIR_ImportUserDict(sFilename, bOverwrite));
 }
 
-PHP_FUNCTION(FileProcess) {
+PHP_FUNCTION(NLPIR_FileProcess) {
     const char *sSourceFilename, *sResultFilename;
     int srclen, sretlen;
     zend_bool bPOStagged = 1;
@@ -279,7 +294,7 @@ PHP_FUNCTION(FileProcess) {
     RETURN_DOUBLE(NLPIR_FileProcess(sSourceFilename, sResultFilename, bPOStagged));
 }
 
-PHP_FUNCTION(AddUserWord) {
+PHP_FUNCTION(NLPIR_AddUserWord) {
     const char *sWord;
     int slen;
 
@@ -291,11 +306,11 @@ PHP_FUNCTION(AddUserWord) {
     RETURN_BOOL(NLPIR_AddUserWord(sWord));
 }
 
-PHP_FUNCTION(SaveTheUsrDic) {
+PHP_FUNCTION(NLPIR_SaveTheUsrDic) {
     RETURN_BOOL(NLPIR_SaveTheUsrDic());
 }
 
-PHP_FUNCTION(DelUsrWord) {
+PHP_FUNCTION(NLPIR_DelUsrWord) {
     const char *sWord;
     int slen;
 
@@ -307,7 +322,7 @@ PHP_FUNCTION(DelUsrWord) {
     RETURN_LONG(NLPIR_DelUsrWord(sWord));
 }
 
-PHP_FUNCTION(GetKeyWords) {
+PHP_FUNCTION(NLPIR_GetKeyWords) {
     const char *sLine;
     int slen;
     long nMaxKeyLimit = 50;
@@ -321,7 +336,7 @@ PHP_FUNCTION(GetKeyWords) {
     RETURN_STRING(NLPIR_GetKeyWords(sLine, nMaxKeyLimit, bWeightOut), 1);
 }
 
-PHP_FUNCTION(GetFileKeyWords) {
+PHP_FUNCTION(NLPIR_GetFileKeyWords) {
     const char *sFilename;
     int slen;
     long nMaxKeyLimit = 50;
@@ -335,7 +350,7 @@ PHP_FUNCTION(GetFileKeyWords) {
     RETURN_STRING(NLPIR_GetFileKeyWords(sFilename, nMaxKeyLimit, bWeightOut), 1);
 }
 
-PHP_FUNCTION(ImportKeyBlackList) {
+PHP_FUNCTION(NLPIR_ImportKeyBlackList) {
     const char *sFilename;
     int slen;
 
@@ -347,7 +362,7 @@ PHP_FUNCTION(ImportKeyBlackList) {
     RETURN_LONG(NLPIR_ImportKeyBlackList(sFilename));
 }
 
-PHP_FUNCTION(GetNewWords) {
+PHP_FUNCTION(NLPIR_GetNewWords) {
     const char *sLine;
     int slen;
     long nMaxKeyLimit = 50;
@@ -361,7 +376,7 @@ PHP_FUNCTION(GetNewWords) {
     RETURN_STRING(NLPIR_GetNewWords(sLine, nMaxKeyLimit, bWeightOut), 1);
 }
 
-PHP_FUNCTION(GetFileNewWords) {
+PHP_FUNCTION(NLPIR_GetFileNewWords) {
     const char *sFilename;
     int slen;
     long nMaxKeyLimit = 50;
@@ -375,7 +390,7 @@ PHP_FUNCTION(GetFileNewWords) {
     RETURN_STRING(NLPIR_GetFileNewWords(sFilename, nMaxKeyLimit, bWeightOut), 1);
 }
 
-PHP_FUNCTION(FingerPrint) {
+PHP_FUNCTION(NLPIR_FingerPrint) {
     const char *sLine;
     int slen;
 
@@ -387,7 +402,7 @@ PHP_FUNCTION(FingerPrint) {
     RETURN_LONG(NLPIR_FingerPrint(sLine));
 }
 
-PHP_FUNCTION(SetPOSmap) {
+PHP_FUNCTION(NLPIR_SetPOSmap) {
     long nPOSmap;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &nPOSmap) == FAILURE)
@@ -398,7 +413,7 @@ PHP_FUNCTION(SetPOSmap) {
     RETURN_BOOL(NLPIR_SetPOSmap(nPOSmap));
 }
 
-PHP_FUNCTION(FinerSegment) {
+PHP_FUNCTION(NLPIR_FinerSegment) {
     const char *sLine;
     int slen;
 
@@ -410,7 +425,7 @@ PHP_FUNCTION(FinerSegment) {
     RETURN_STRING(NLPIR_FinerSegment(sLine), 1);
 }
 
-PHP_FUNCTION(GetEngWordOrign) {
+PHP_FUNCTION(NLPIR_GetEngWordOrign) {
     const char *sWord;
     int slen;
 
@@ -422,7 +437,7 @@ PHP_FUNCTION(GetEngWordOrign) {
     RETURN_STRING(NLPIR_GetEngWordOrign(sWord), 1);
 }
 
-PHP_FUNCTION(WordFreqStat) {
+PHP_FUNCTION(NLPIR_WordFreqStat) {
     const char *sText;
     int slen;
 
@@ -434,7 +449,7 @@ PHP_FUNCTION(WordFreqStat) {
     RETURN_STRING(NLPIR_WordFreqStat(sText), 1);
 }
 
-PHP_FUNCTION(FileWordFreqStat) {
+PHP_FUNCTION(NLPIR_FileWordFreqStat) {
     const char *sFilename;
     int slen;
 
