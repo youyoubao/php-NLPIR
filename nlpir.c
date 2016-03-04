@@ -192,7 +192,7 @@ PHP_FUNCTION(NLPIR_Init)
     const char *dictDir;
     int encoding, slen;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,"s|l", &dictDir, &slen, &encoding) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|l", &dictDir, &slen, &encoding) == FAILURE)
     {
         RETURN_NULL();
     }
@@ -210,64 +210,241 @@ PHP_FUNCTION(ParagraphProcess)
     const char *inputChar;
     int slen, flag;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,"s|l", &inputChar, &slen, &flag) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|l", &inputChar, &slen, &flag) == FAILURE)
     {
         RETURN_NULL();
     }
     RETURN_STRING(NLPIR_ParagraphProcess(inputChar, flag), 1);
 }
+
 PHP_FUNCTION(ParagraphProcessA)
 {
     const char *inputChar, *tmpchar;
     const result_t *arrayResult;
     int nCount, i, slen; //结果数量
-    zval *arrtmp;
+    zval *aResultT;
     
     array_init(return_value); //返回值是数组
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,"s", &inputChar, &slen) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &inputChar, &slen) == FAILURE)
     {
         RETURN_NULL();
     }
     arrayResult = NLPIR_ParagraphProcessA(inputChar, &nCount, true);
-    for(i = 0; i < nCount; i++) {
-        MAKE_STD_ZVAL(arrtmp);
-        array_init(arrtmp);
-        add_assoc_long(arrtmp, "start", arrayResult[i].start);
-        add_assoc_long(arrtmp, "length", arrayResult[i].length);
-        add_assoc_string(arrtmp, "sPOS", (char *)(arrayResult[i].sPOS), 1);
-        add_assoc_long(arrtmp, "iPOS", arrayResult[i].iPOS);
-        add_assoc_long(arrtmp, "word_ID", arrayResult[i].word_ID);
-        add_assoc_long(arrtmp, "word_type", arrayResult[i].word_type);
-        add_assoc_long(arrtmp, "weight", arrayResult[i].weight);
-        add_index_zval(return_value, i, arrtmp);
+    for (i = 0; i < nCount; i++) {
+        MAKE_STD_ZVAL(aResultT);
+        array_init(aResultT);
+        add_assoc_long(aResultT, "start", arrayResult[i].start);
+        add_assoc_long(aResultT, "length", arrayResult[i].length);
+        add_assoc_string(aResultT, "sPOS", (char *)(arrayResult[i].sPOS), 1);
+        add_assoc_long(aResultT, "iPOS", arrayResult[i].iPOS);
+        add_assoc_long(aResultT, "word_ID", arrayResult[i].word_ID);
+        add_assoc_long(aResultT, "word_type", arrayResult[i].word_type);
+        add_assoc_long(aResultT, "weight", arrayResult[i].weight);
+        add_index_zval(return_value, i, aResultT);
     }
 }
+
 PHP_FUNCTION(NLPIR_Exit) {
     NLPIR_Exit();
 }
-PHP_FUNCTION(NLPIR_GetLastErrorMsg) {
 
+PHP_FUNCTION(NLPIR_GetLastErrorMsg) {
+    RETURN_STRING(NLPIR_GetLastErrorMsg(), 1);
 }
 
 PHP_FUNCTION(ImportUserDict) {
+    const char *sFilename;
+    int slen;
+    zend_bool bOverwrite = 1;
 
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|b", &sFilename, &slen, &bOverwrite) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_INT(NLPIR_ImportUserDict(sFilename, bOverwrite));
 }
-PHP_FUNCTION(FileProcess) {}
-PHP_FUNCTION(AddUserWord) {}
-PHP_FUNCTION(SaveTheUsrDic ) {}
-PHP_FUNCTION(DelUsrWord) {}
-PHP_FUNCTION(GetKeyWords) {}
-PHP_FUNCTION(GetFileKeyWords) {}
-PHP_FUNCTION(ImportKeyBlackList) {}
-PHP_FUNCTION(GetNewWords) {}
-PHP_FUNCTION(GetFileNewWords) {}
-PHP_FUNCTION(FingerPrint) {}
-PHP_FUNCTION(SetPOSmap) {}
-PHP_FUNCTION(FinerSegment) {}
-PHP_FUNCTION(GetEngWordOrign) {}
-PHP_FUNCTION(WordFreqStat) {}
-PHP_FUNCTION(FileWordFreqStat) {}
+
+PHP_FUNCTION(FileProcess) {
+    const char *sSourceFilename, *sResultFilename;
+    int srclen, sretlen;
+    zend_bool bPOStagged = 1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|b", &sSourceFilename, &srclen, &sResultFilename, &sretlen, &bPOStagged) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_DOUBLE(NLPIR_FileProcess(sSourceFilename, sResultFilename, bOverwrite));
+}
+
+PHP_FUNCTION(AddUserWord) {
+    const char *sWord;
+    int slen;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &sWord, &slen) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_BOOL(NLPIR_AddUserWord(sWord));
+}
+
+PHP_FUNCTION(SaveTheUsrDic) {
+    RETURN_BOOL(NLPIR_SaveTheUsrDic());
+}
+
+PHP_FUNCTION(DelUsrWord) {
+    const char *sWord;
+    int slen;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &sWord, &slen) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_INT(NLPIR_DelUsrWord(sWord));
+}
+
+PHP_FUNCTION(GetKeyWords) {
+    const char *sLine;
+    int slen;
+    long nMaxKeyLimit = 50;
+    zend_bool bWeightOut = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lb", &sLine, &slen, &nMaxKeyLimit, &bWeightOut) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(NLPIR_GetKeyWords(sLine, nMaxKeyLimit, bWeightOut), 1);
+}
+
+PHP_FUNCTION(GetFileKeyWords) {
+    const char *sFilename;
+    int slen;
+    long nMaxKeyLimit = 50;
+    zend_bool bWeightOut = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lb", &sFilename, &slen, &nMaxKeyLimit, &bWeightOut) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(NLPIR_GetFileKeyWords(sFilename, nMaxKeyLimit, bWeightOut), 1);
+}
+
+PHP_FUNCTION(ImportKeyBlackList) {
+    const char *sFilename;
+    int slen;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &sFilename, &slen) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_INT(NLPIR_ImportKeyBlackList(sFilename));
+}
+
+PHP_FUNCTION(GetNewWords) {
+    const char *sLine;
+    int slen;
+    long nMaxKeyLimit = 50;
+    zend_bool bWeightOut = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lb", &sLine, &slen, &nMaxKeyLimit, &bWeightOut) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(NLPIR_GetNewWords(sLine, nMaxKeyLimit, bWeightOut), 1);
+}
+
+PHP_FUNCTION(GetFileNewWords) {
+    const char *sFilename;
+    int slen;
+    long nMaxKeyLimit = 50;
+    zend_bool bWeightOut = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lb", &sFilename, &slen, &nMaxKeyLimit, &bWeightOut) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(NLPIR_GetFileNewWords(sFilename, nMaxKeyLimit, bWeightOut), 1);
+}
+
+PHP_FUNCTION(FingerPrint) {
+    const char *sLine;
+    int slen;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &sLine, &slen) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_LONG(NLPIR_FingerPrint(sLine));
+}
+
+PHP_FUNCTION(SetPOSmap) {
+    long nPOSmap;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &nPOSmap) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_BOOL(NLPIR_SetPOSmap(nPOSmap));
+}
+
+PHP_FUNCTION(FinerSegment) {
+    const char *sLine;
+    int slen;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &sLine, &slen) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(NLPIR_FinerSegment(sLine), 1);
+}
+
+PHP_FUNCTION(GetEngWordOrign) {
+    const char *sWord;
+    int slen;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &sWord, &slen) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(NLPIR_GetEngWordOrign(sWord), 1);
+}
+
+PHP_FUNCTION(WordFreqStat) {
+    const char *sText;
+    int slen;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &sText, &slen) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(NLPIR_WordFreqStat(sText), 1);
+}
+
+PHP_FUNCTION(FileWordFreqStat) {
+    const char *sFilename;
+    int slen;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &sFilename, &slen) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    RETURN_STRING(NLPIR_FileWordFreqStat(sFilename), 1);
+}
 
 
 /* }}} */
