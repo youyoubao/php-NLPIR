@@ -15,7 +15,7 @@ if test "$PHP_NLPIR" != "no"; then
   PHP_ADD_INCLUDE(./NLPIR/include)
 
   # --enable-nlpir -> check for lib and symbol presence
-  LIBNAME=nlpir # you may want to change this
+  LIBNAME=nlpir64 # you may want to change this
   LIBSYMBOL=nlpir # you most likely want to change this 
 
   PHP_CHECK_LIBRARY($LIBNAME, $LIBSYMBOL,
