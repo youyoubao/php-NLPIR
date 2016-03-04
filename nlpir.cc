@@ -205,7 +205,8 @@ PHP_FUNCTION(confirm_nlpir_compiled)
 PHP_FUNCTION(NLPIR_Init)
 {
     const char *dictDir;
-    int encoding, slen;
+    int slen;
+    long encoding;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|l", &dictDir, &slen, &encoding) == FAILURE)
     {
@@ -223,7 +224,8 @@ PHP_FUNCTION(NLPIR_Init)
 PHP_FUNCTION(NLPIR_ParagraphProcess)
 {
     const char *inputChar;
-    int slen, flag;
+    int slen;
+    long flag;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|l", &inputChar, &slen, &flag) == FAILURE)
     {
@@ -232,7 +234,7 @@ PHP_FUNCTION(NLPIR_ParagraphProcess)
     RETURN_STRING(NLPIR_ParagraphProcess(inputChar, flag), 1);
 }
 
-PHP_FUNCTION(ParagraphProcessA)
+PHP_FUNCTION(NLPIR_ParagraphProcessA)
 {
     const char *inputChar, *tmpchar;
     const result_t *arrayResult;
