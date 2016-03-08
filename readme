@@ -1,19 +1,9 @@
 安装步骤：
-1:	mv libNLPIR.so /usr/lib/
-2:	/usr/local/php/bin/phpize
-3:	./configure --with-php-config=/usr/local/php/bin/php-config
-4:	
-	vim Makefile
-		CC = cc  
-			改为 CC = g++
-		CPPFLAGS = -DHAVE_CONFIG_H
-			改为 CPPFLAGS = -DHAVE_CONFIG_H -DOS_LINUX -lNLPIR
+1:	mv libNLPIR64.so /usr/lib/
+2:	phpize
+3:	./configure
 5:	make
 6:	make install
-
-注：1，稍后会调整confing.m4，消灭第4步
-   2：只实现部分函数，其它不常用函数未实现
-
 
 Demo:
 	1: 下载官方的字典
@@ -21,7 +11,7 @@ Demo:
 		解压后里面有个Data目录
 	2：php调用
 		<?php
-		$ret = NLPIR_Init("20150702124141_ICTCLAS2015/汉语分词20140928/", 1);
+		$ret = NLPIR_Init("NLPIR_Root", 1);
 		if($ret !== 'SUCCESS') {
 			echo NLPIR_GetLastErrorMsg();
 			die();
